@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Love Letters Envelope</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap");
+
+    :root {
+      --envelope-x: 300px;
+      --envelope-y: 200px;
+      --envelope-bg: Moccasin;
+      --envelope-shadow: Peru;
+      --letter-x: 250px;
+      --letter-y: calc(250px - 1rem - 10px);
+      --letter-bg: AntiqueWhite;
+      --letter-shadow: BurlyWood;
+      --letter-text: #180d07;
+      --letter-font: "Dancing Script", serif;
+      --letter-button-text: darkred;
+      --heart-bg: darkred;
+      --heart-text: white;
+    }
+
+    @media (min-width: 650px) {
+      :root {
+        --envelope-x: 600px;
+        --envelope-y: 400px;
+        --letter-x: 500px;
+        --letter-y: calc(400px - 1rem - 10px);
+      }
+    }
+
+    html {
+      font-size: 20px;
+    }
+
+    body {
+      background-color: darkred;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cssletter {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      -webkit-user-select: none;
+      margin: 24dvh 0;
+    }
+
+    .envelope {
+      position: relative;
+      width: var(--envelope-x);
+      height: var(--envelope-y);
+      background: var(--envelope-bg);
+      box-shadow: inset 0 0 30px -5px var(--envelope-shadow), 0 0 50vw 0 #540000;
+    }
+
+    .envelope::before {
+      content: "˚ʚ❤︎ɞ˚";
+      font-size: 5rem;
+      color: white;
+      position: absolute;
+      left: 50%;
+      top: 30%;
+      transform: translate(-50%, -50%);
+      mix-blend-mode: soft-light;
+    }
+
+    .envelope-flap {
+      width: 100%;
+      height: 71%;
+      position: absolute;
+      top: 0;
+      z-index: 3;
+      overflow: hidden;
+      transition: 0.6s linear all;
+      transform-origin: top;
+      pointer-events: all;
+    }
+
+    .envelope-folds {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 2;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+
+    .envelope-flap::before,
+    .envelope-left::before,
+    .envelope-right::before,
+    .envelope-bottom::before {
+      content: "";
+      transform: rotate(45deg);
+      background: var(--envelope-bg);
+      box-shadow: 0 0 30px -5px var(--envelope-shadow);
+      width: 100%;
+      aspect-ratio: 1;
+      display: block;
+      position: absolute;
+      top: 60%;
+    }
+
+    .envelope-flap::before {
+      border-radius: 5rem;
+      bottom: 30px;
+      border-radius: 5rem;
+      top: auto;
+    }
+
+    @media (min-width: 650px) {
+      .envelope-flap::before {
+        bottom: 100px;
+      }
+    }
+
+    .envelope-left::before {
+      top: 10%;
+      left: -65%;
+    }
+
+    .envelope-right::before {
+      top: 10%;
+      right: -65%;
+    }
+
+    .envelope-bottom::before {
+      top: 60%;
+      border-radius: 5rem;
+    }
+
+    .heart {
+      z-index: 4;
+      position: relative;
+      box-shadow: none;
+      border: none;
+      width: 70px;
+      aspect-ratio: 1;
+      background: radial-gradient(circle at 60% 65%, var(--heart-bg) 64%, #0000 65%) top left/50% 50%,
+        radial-gradient(circle at 40% 65%, var(--heart-bg) 64%, #0000 65%) top right/50% 50%,
+        conic-gradient(from -45deg at 50% 85.5%, var(--heart-bg) 90deg, #0000 0) bottom/100% 50%;
+      background-repeat: no-repeat;
+      left: 50%;
+      top: 70%;
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+    }
+
+    @media (min-width: 650px) {
+      .heart {
+        width: 150px;
+      }
+    }
+
+    .heart::before {
+      content: "";
+      display: block;
+      position: absolute;
+      width: 70px;
+      aspect-ratio: 1;
+      background: radial-gradient(circle at 60% 65%, #ffffff26 64%, #0000 65%) top left/50% 50%,
+        radial-gradient(circle at 40% 65%, #ffffff26 64%, #0000 65%) top right/50% 50%,
+        conic-gradient(from -45deg at 50% 85.5%, #ffffff26 90deg, #0000 0) bottom/100% 50%;
+      background-repeat: no-repeat;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      transition: 0.3s ease all;
+      z-index: -1;
+    }
+
+    @media (min-width: 650px) {
+      .heart::before {
+        width: 150px;
+      }
+    }
+
+    .heart:hover,
+    .heart:active,
+    .heart:focus {
+      transform: translate(-50%, -50%);
+      background-color: transparent;
+      color: var(--heart-text);
+    }
+
+    .heart:hover::before,
+    .heart:active::before,
+    .heart:focus::before {
+      transform: translate(-50%, -50%) scale(0.8);
+    }
+
+    .heart-text {
+      transform: translateY(-10px);
+      display: block;
+      color: var(--heart-text);
+      font-size: 1.5rem;
+      font-family: var(--letter-font);
+    }
+
+    .envelope.active * {
+      pointer-events: none;
+    }
+
+    .envelope.active .envelope-flap {
+      transform: rotateX(-180deg) translateY(0);
+      perspective: 10px;
+    }
+
+    .envelope.active .envelope-flap::before {
+      box-shadow: inset 0 0 30px -5px var(--envelope-shadow);
+    }
+
+    .envelope.active .heart {
+      display: none;
+    }
+
+    .letter {
+      box-sizing: border-box;
+      font-family: var(--letter-font);
+      font-size: 1rem;
+      line-height: 1.1;
+      background-color: var(--letter-bg);
+      color: var(--letter-text);
+      width: var(--letter-x);
+      height: var(--letter-y);
+      user-select: none;
+      box-shadow: inset 0 0 20px -5px var(--letter-shadow);
+      padding: 3rem 1rem 1rem;
+      margin: 0;
+      cursor: grab;
+      position: absolute;
+      top: 1rem;
+      overflow: auto;
+      text-align: center;
+      border: 0;
+    }
+
+    .letter:active {
+      cursor: grabbing;
+    }
+
+    .letter.center {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    .letter cite {
+      font-size: 1.25rem;
+      color: var(--letter-text);
+      margin-top: 1rem;
+      font-style: normal;
+    }
+
+    .letter:nth-child(even) {
+      transform: skew(-2deg) translateY(-4px);
+    }
+
+    .letter:nth-child(odd) {
+      transform: skew(2deg) translateY(4px);
+    }
+
+    @media (min-width: 650px) {
+      .letter {
+        font-size: 1.3rem;
+      }
+    }
+
+    .closeLetter {
+      font-size: 0 !important;
+      position: absolute;
+      top: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: none;
+      box-shadow: none;
+      padding: 0;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .closeLetter::before {
+      content: "˚ʚ❤︎ɞ˚";
+      font-size: 1.5rem !important;
+      font-family: var(--letter-font);
+      color: var(--letter-button-text);
+      text-align: center;
+    }
+
+    .closeLetter:hover,
+    .closeLetter:active,
+    .closeLetter:focus {
+      background-color: transparent;
+      color: var(--letter-text);
+      transform: translateX(-50%);
+      padding: 0;
+      margin: 0;
+    }
+
+    .closeLetter:hover::before,
+    .closeLetter:active::before,
+    .closeLetter:focus::before {
+      content: "xXx";
+    }
+
+    footer {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      z-index: 10000000;
+    }
+
+    footer svg {
+      width: 100px;
+    }
+
+    .logo-tx {
+      fill: white;
+    }
+
+    .logo-x {
+      fill: white;
+    }
+  </style>
+</head>
+<body>
+  <section class="cssletter">
+    <div class="envelope">
+      <button class="heart" id="openEnvelope" aria-label="Open Envelope">
+        <span class="heart-text">Open</span>
+      </button>
+      <div class="envelope-flap"></div>
+      <div class="envelope-folds">
+        <div class="envelope-left"></div>
+        <div class="envelope-right"></div>
+        <div class="envelope-bottom"></div>
+      </div>
+    </div>
+    <div class="letters">
+      <blockquote class="letter center" id="1" tabindex="0" style="left: 390px;">
+        <button class="closeLetter" title="Close Amelia's letter">Close Amelia's letter</button>
+        <p>haii .</p>
+        <cite>tabs</cite>
+      </blockquote>
+
+      <blockquote class="letter center" id="2" tabindex="0" style="left: 390px;">
+        <button class="closeLetter" title="Close Oliver's letter">Close Oliver's letter</button>
+        <p>miss you ☹️.</p>
+        <cite>tabs</cite>
+      </blockquote>
+
+      <blockquote class="letter center" id="3" tabindex="0" style="left: 390px;">
+        <button class="closeLetter" title="Close Isabella's letter">Close Isabella's letter</button>
+        <p>wala ra miss you lang!.</p>
+        <cite>tabs</cite>
+      </blockquote>
+
+      <blockquote class="letter center" id="4" tabindex="0" style="left: 390px;">
+        <button class="closeLetter" title="Close William's letter">Close William's letter</button>
+        <p>sorry kung ani rako .</p>
+        <cite>tabs</cite>
+      </blockquote>
+
+      <blockquote class="letter center" id="5" tabindex="0" style="left: 390px;">
+        <button class="closeLetter" title="Close Charlotte's letter">Close Charlotte's letter</button>
+        <p>huhuhu 😟.</p>
+        <cite>tabs</cite>
+      </blockquote>
+
+      <blockquote class="letter center" id="6" tabindex="0" style="left: 390px;">
+        <button class="closeLetter" title="Close Henry's letter">Close Henry's letter</button>
+        <p>sorry pero ma feel man jud nako ang presensya 😭.</p>
+        <cite>tabs</cite>
+      </blockquote>
+
+      <blockquote class="letter center" id="7" tabindex="0" style="left: 390px;">
+        <button class="closeLetter" title="Close Sophia's letter">Close Sophia's letter</button>
+        <p>wa jud ko ksabot naunsa .</p>
+        <cite>tabs</cite>
+      </blockquote>
+
+      <blockquote class="letter center" id="8" tabindex="0" style="left: 390px;">
+        <button class="closeLetter" title="Close James's letter">Close James's letter</button>
+        <p>hayst.</p>
+        <cite>tabs</cite>
+      </blockquote>
+
+      <blockquote class="letter center" id="9" tabindex="0" style="left: 390px;">
+        <button class="closeLetter" title="Close Victoria's letter">Close Victoria's letter</button>
+        <p>wala raman gud ma sud ras ako huna2 ambottttt guddd.</p>
+        <cite>tabs</cite>
+      </blockquote>
+
+      <blockquote class="letter center" id="10" tabindex="0" style="left: 390px;">
+        <button class="closeLetter" title="Close Edward's letter">Close Edward's letter</button>
+        <p>tubaggaaa ko pleaseeeee .</p>
+        <cite>tabs</cite>
+      </blockquote>
+
+      <blockquote class="letter center" id="11" tabindex="0" style="left: 390px;">
+        <button class="closeLetter" title="Close Alice's letter">Close Alice's letter</button>
+        <p>😭😭.</p>
+        <cite>tabs</cite>
+      </blockquote>
+
+      <blockquote class="letter center" id="12" tabindex="0" style="left: 390px;">
+        <button class="closeLetter" title="Close Freya's letter">Close Freya's letter</button>
+        <p>miss you girl.</p>
+        <cite>tabs</cite>
+      </blockquote>
+
+      <blockquote class="letter center" id="13" tabindex="0" style="left: 390px;">
+        <button class="closeLetter" title="Close Noah's letter">Close Noah's letter</button>
+        <p>wako ksabot bog,at kaayo sa dughan pramiss.</p>
+        <cite>tabs</cite>
+      </blockquote>
+
+      <blockquote class="letter center" id="14" tabindex="0" style="left: 390px;">
+        <button class="closeLetter" title="Close Grace's letter">Close Grace's letter</button>
+        <p>wala lang morag ganahan rako maka sabot unsay reason girl.</p>
+        <cite>tabs</cite>
+      </blockquote>
+
+      <blockquote class="letter center" id="15" tabindex="0" style="left: 390px;">
+        <button class="closeLetter" title="Close Samuel's letter">Close Samuel's letter</button>
+        <p>please.</p>
+        <cite>tabs</cite>
+      </blockquote>
+
+      <blockquote class="letter center" id="16" tabindex="0" style="left: 390px;">
+        <button class="closeLetter" title="Close Ivy's letter">Close Ivy's letter</button>
+        <p>please.</p>
+        <cite>tabs</cite>
+      </blockquote>
+
+      <blockquote class="letter center" id="17" tabindex="0" style="left: 390px;">
+        <button class="closeLetter" title="Close Alexander's letter">Close Alexander's letter</button>
+        <p>please.</p>
+        <cite>tabs</cite>
+      </blockquote>
+
+      <blockquote class="letter center" id="18" tabindex="0" style="left: 390px;">
+        <button class="closeLetter" title="Close Rose's letter">Close Rose's letter</button>
+        <p>please.</p>
+        <cite>tabs</cite>
+      </blockquote>
+
+      <blockquote class="letter center" id="19" tabindex="0" style="left: 390px;">
+        <button class="closeLetter" title="Close Lucas's letter">Close Lucas's letter</button>
+        <p>please.</p>
+        <cite>tabs</cite>
+      </blockquote>
+
+      <blockquote class="letter center" id="20" tabindex="0" style="left: 390px;">
+        <button class="closeLetter" title="Close Elise's letter">Close Elise's letter</button>
+        <p>i make this na .</p>
+        <cite>tabs</cite>
+      </blockquote>
+
+      <blockquote class="letter center" id="21" tabindex="0" style="left: 390px;">
+        <button class="closeLetter" title="Close Julian's letter">Close Julian's letter</button>
+        <p>nag bakasali na naay response nimo huhuhu.</p>
+        <cite>Julian Oscar</cite>
+      </blockquote>
+
+      <blockquote class="letter center" id="22" tabindex="0" style="left: 390px;">
+        <button class="closeLetter" title="Close Elena's letter">Close Elena's letter</button>
+        <p>miss you girl thank you hope ma noticeeee.</p>
+        <cite>tabs</cite>
+      </blockquote>
+    </div>
+  </section>
+  
+  <script>
+    const letters = document.querySelectorAll(".letter");
+    const lettersContainer = document.querySelector(".letters");
+    let zIndexCounter = 10;
+
+    const shuffleArray = (array) => {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    };
+
+    const shuffledThings = Array.from(letters);
+    shuffleArray(shuffledThings);
+
+    shuffledThings.forEach((letter) => {
+      lettersContainer.appendChild(letter);
+      const center = document.querySelector(".cssletter").offsetWidth / 2 - letter.offsetWidth / 2;
+      letter.style.left = `${center}px`;
+
+      function isOverflown(element) {
+        return element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth;
+      }
+
+      if (!isOverflown(letter)) {
+        letter.classList.add("center");
+      }
+      
+      let offsetX, offsetY;
+      letter.addEventListener("mousedown", (e) => {
+        if (e.target.tagName !== "BUTTON") {
+          const rect = e.target.getBoundingClientRect();
+
+          letter.style.position = "fixed";
+          letter.style.left = `${rect.left}px`;
+          letter.style.top = `${rect.top}px`;
+
+          offsetX = e.clientX - rect.left;
+          offsetY = e.clientY - rect.top;
+
+          letter.style.zIndex = zIndexCounter++;
+          const moveAt = (posX, posY) => {
+            letter.style.left = `${posX - offsetX}px`;
+            letter.style.top = `${posY - offsetY}px`;
+          };
+          const onMouseMove = (moveEvent) => moveAt(moveEvent.clientX, moveEvent.clientY);
+          const onMouseUp = () => {
+            document.removeEventListener("mousemove", onMouseMove);
+            document.removeEventListener("mouseup", onMouseUp);
+          };
+          document.addEventListener("mousemove", onMouseMove);
+          document.addEventListener("mouseup", onMouseUp);
+        }
+      });
+    });
+
+    document.querySelector("#openEnvelope").addEventListener("click", () => {
+      document.querySelector(".envelope").classList.add("active");
+    });
+
+    const closeButtons = document.querySelectorAll(".closeLetter");
+    closeButtons.forEach((button) => {
+      button.addEventListener("click", (e) => {
+        e.preventDefault();
+        const letter = e.target.closest(".letter");
+        if (letter) {
+          letter.style.display = "none";
+        }
+      });
+    });
+  </script>
+</body>
+</html>
